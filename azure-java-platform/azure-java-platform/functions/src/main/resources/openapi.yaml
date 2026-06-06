@@ -1,0 +1,50 @@
+openapi: 3.0.3
+info:
+  title: Functions HTTP API
+  version: 1.0.0
+  description: |
+    HTTP endpoints exposed by the Azure Functions app.
+    All `/api/orders*` endpoints require an Entra ID bearer token.
+servers:
+  - url: /api
+paths:
+  /orders:
+    post:
+      summary: Submit an order (enqueues to Kafka)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OrderEvent' }
+      responses:
+        '202':
+          description: Accepted; processing asynchronously
+        '401': { description: Unauthorized }
+  /orders/{id}:
+    get:
+      summary: Read processed order from Cosmos DB
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    OrderEvent:
+      type: object
+      required: [customerId, sku, quantity]
+      properties:
+        correlationId: { type: string, format: uuid }
+        customerId: { type: string }
+        sku: { type: string }
+        quantity: { type: integer }

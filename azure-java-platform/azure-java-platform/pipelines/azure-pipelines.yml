@@ -1,0 +1,88 @@
+trigger:
+  branches: { include: [ main ] }
+pr:
+  branches: { include: [ main ] }
+
+variables:
+  mavenCacheFolder: $(Pipeline.Workspace)/.m2/repository
+  MAVEN_OPTS: '-Dmaven.repo.local=$(mavenCacheFolder)'
+  azureServiceConnection: 'azure-prod-wif'   # workload identity federation
+  resourceGroup: 'rg-azjava-dev'
+  webApiName: 'app-azjava-dev-REPLACE'
+  functionAppName: 'func-azjava-dev-REPLACE'
+  tfWorkingDir: 'infra'
+
+stages:
+- stage: Build
+  jobs:
+  - job: BuildAndTest
+    pool: { vmImage: 'ubuntu-latest' }
+    steps:
+    - task: Cache@2
+      inputs: { key: 'maven | "$(Agent.OS)" | **/pom.xml', path: $(mavenCacheFolder) }
+    - task: JavaToolInstaller@0
+      inputs: { versionSpec: '17', jdkArchitectureOption: 'x64', jdkSourceOption: 'PreInstalled' }
+    - script: mvn -B -ntp clean verify
+      displayName: 'Maven build & tests'
+    - publish: webapi/target/webapi.jar
+      artifact: webapi
+    - publish: functions/target/azure-functions
+      artifact: functions
+
+- stage: Infra
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - deployment: Terraform
+    environment: 'dev-infra'
+    pool: { vmImage: 'ubuntu-latest' }
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: TerraformInstaller@1
+            inputs: { terraformVersion: '1.9.5' }
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              workingDirectory: $(tfWorkingDir)
+              inlineScript: |
+                terraform init -backend-config=backend.hcl
+                terraform apply -auto-approve -var-file=envs/dev.tfvars
+
+- stage: Deploy
+  dependsOn: Infra
+  jobs:
+  - deployment: WebApi
+    environment: 'dev'
+    pool: { vmImage: 'ubuntu-latest' }
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: webapi
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              appType: webAppLinux
+              appName: $(webApiName)
+              package: $(Pipeline.Workspace)/webapi/webapi.jar
+  - deployment: Functions
+    environment: 'dev'
+    pool: { vmImage: 'ubuntu-latest' }
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: functions
+          - task: AzureFunctionApp@2
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              appType: functionAppLinux
+              appName: $(functionAppName)
+              package: $(Pipeline.Workspace)/functions
+              runtimeStack: 'JAVA|17'

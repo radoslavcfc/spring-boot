@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: webapi
+  datasource:
+    url: ${SQL_JDBC_URL:jdbc:sqlserver://localhost:1433;databaseName=appdb;encrypt=true;trustServerCertificate=true}
+    username: ${SQL_USER:sa}
+    password: ${SQL_PASSWORD:Your_password123}
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${ENTRA_ISSUER:https://login.microsoftonline.com/REPLACE_TENANT_ID/v2.0}
+          audiences:
+            - ${ENTRA_AUDIENCE:api://REPLACE_APP_ID}
+
+server:
+  port: 8080
+  shutdown: graceful
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    oauth:
+      client-id: ${ENTRA_CLIENT_ID:REPLACE}
+  oAuthFlow:
+    authorizationUrl: https://login.microsoftonline.com/REPLACE_TENANT_ID/oauth2/v2.0/authorize
+    tokenUrl: https://login.microsoftonline.com/REPLACE_TENANT_ID/oauth2/v2.0/token
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  level:
+    root: INFO
+    com.example: DEBUG

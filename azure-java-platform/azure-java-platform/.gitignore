@@ -1,0 +1,12 @@
+target/
+.idea/
+*.iml
+.vscode/
+.DS_Store
+local.settings.json
+infra/.terraform/
+infra/.terraform.lock.hcl
+infra/backend.hcl
+*.tfstate
+*.tfstate.*
+*.log

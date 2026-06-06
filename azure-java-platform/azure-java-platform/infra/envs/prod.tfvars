@@ -1,0 +1,6 @@
+project            = "azjava"
+environment        = "prod"
+location           = "westeurope"
+sql_admin_login    = "sqladmin"
+sql_admin_password = "REPLACE_WITH_STRONG_PASSWORD"
+entra_audience     = "api://REPLACE_APP_ID"

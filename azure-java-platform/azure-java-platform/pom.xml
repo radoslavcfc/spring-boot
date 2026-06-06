@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.example</groupId>
+    <artifactId>azure-java-platform</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>azure-java-platform</name>
+
+    <modules>
+        <module>shared</module>
+        <module>webapi</module>
+        <module>functions</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-boot.version>3.3.4</spring-boot.version>
+        <azure-functions-java-library.version>3.1.0</azure-functions-java-library.version>
+        <azure-functions-maven-plugin.version>1.36.0</azure-functions-maven-plugin.version>
+        <azure-cosmos.version>4.63.1</azure-cosmos.version>
+        <azure-identity.version>1.13.3</azure-identity.version>
+        <kafka-clients.version>3.7.1</kafka-clients.version>
+        <mssql-jdbc.version>12.8.1.jre11</mssql-jdbc.version>
+        <flyway.version>10.17.3</flyway.version>
+        <springdoc.version>2.6.0</springdoc.version>
+        <appinsights.version>3.5.4</appinsights.version>
+        <jackson.version>2.17.2</jackson.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=appdb;encrypt=true;trustServerCertificate=true
+    username: sa
+    password: Your_password123
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${ENTRA_ISSUER:https://login.microsoftonline.com/common/v2.0}

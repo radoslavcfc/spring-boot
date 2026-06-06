@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Your_password123"
+    ports: [ "1433:1433" ]
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Your_password123 -Q 'SELECT 1' -C -No"]
+      interval: 10s
+      retries: 10
+
+  sql-init:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      sqlserver: { condition: service_healthy }
+    entrypoint: >
+      /bin/bash -c "
+      /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P Your_password123 -Q \"IF DB_ID('appdb') IS NULL CREATE DATABASE appdb;\" "
+
+  redpanda:
+    image: redpandadata/redpanda:v24.2.4
+    command:
+      - redpanda
+      - start
+      - --smp=1
+      - --memory=512M
+      - --reserve-memory=0M
+      - --overprovisioned
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://localhost:9092
+    ports: [ "9092:9092" ]
+
+  cosmos:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    environment:
+      AZURE_COSMOS_EMULATOR_PARTITION_COUNT: "3"
+      AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: "true"
+    ports:
+      - "8081:8081"
+      - "10250-10255:10250-10255"
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: "azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0"
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
