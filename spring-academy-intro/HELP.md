@@ -20,3 +20,18 @@ These additional references should also help you:
 
 * [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
 
+
+### Here are the essential Gradle commands:
+Run the application:
+bash./gradlew bootRun
+Run tests:
+bash./gradlew test
+Run a specific test class:
+bash./gradlew test --tests "com.example.demo.DemoApplicationTests"
+Build (compiles + runs tests):
+bash./gradlew build
+Build without tests:
+bash./gradlew build -x test
+
+### Gradle user guide
+https://docs.gradle.org/current/userguide/part1_gradle_init.html#part1_begin
