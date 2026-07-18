@@ -1,4 +1,4 @@
-package example.cashcard;
+package src.test.java.example.cashcard;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
