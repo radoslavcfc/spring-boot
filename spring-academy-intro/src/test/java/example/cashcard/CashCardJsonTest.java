@@ -1,13 +1,12 @@
-package src.test.java.example.cashcard;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.boot.test.json.JacksonTester;
+package example.cashcard;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.json.JsonTest;
+import org.springframework.boot.test.json.JacksonTester;
 
 // The @JsonTest annotation marks the CashCardJsonTest as a test class which uses the
 // Jackson framework (which is included as part of Spring).
