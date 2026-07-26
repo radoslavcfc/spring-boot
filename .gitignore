@@ -1,8 +1,24 @@
-*/build/
-*/out/
-*/.gradle/
-*/.idea/
+# Gradle / build outputs
+.gradle/
+build/
+**/build/
+
+# Java binaries & class files
+*.class
+bin/
+out/
+
+# IntelliJ / IDE
+.idea/
 *.iml
 *.ipr
-*/bin/
-*/.vscode/
+
+# VS Code
+.vscode/
+
+# Maven
+target/
+
+# OS / misc
+.DS_Store
+*.log
