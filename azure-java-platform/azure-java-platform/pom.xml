@@ -14,10 +14,10 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>3.3.4</spring-boot.version>
+        <spring-boot.version>4.0.6</spring-boot.version>
         <azure-functions-java-library.version>3.1.0</azure-functions-java-library.version>
         <azure-functions-maven-plugin.version>1.36.0</azure-functions-maven-plugin.version>
         <azure-cosmos.version>4.63.1</azure-cosmos.version>
