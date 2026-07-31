@@ -35,29 +35,6 @@ out/
 .settings/
 
 ################################################################################
-# TERRAFORM & INFRASTRUCTURE
-################################################################################
-# Terraform
-.terraform/
-.terraform.lock.hcl
-terraform.tfvars
-terraform.tfvars.json
-*.tfstate
-*.tfstate.*
-backend.hcl
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-.terraformrc
-terraform.rc
-tfplan
-
-# Azure Files
-.azure/
-*.azurite.db
-
-################################################################################
 # AZURE FUNCTIONS
 ################################################################################
 # Azure Functions local settings
@@ -66,6 +43,17 @@ bin/
 obj/
 *.user
 .funcpack/
+
+################################################################################
+# AZURE & CLOUD
+################################################################################
+# Azure
+.azure/
+*.azurite.db
+
+# Cosmos DB Emulator
+CosmosDB.Emulator/
+.DiscoveryStore/
 
 ################################################################################
 # ENVIRONMENT & CONFIGURATION
@@ -84,8 +72,9 @@ local.settings.json
 *.key
 *.cert
 *.pfx
-servicebus-connection-string.txt
 cosmos-connection-string.txt
+servicebus-connection-string.txt
+storage-connection-string.txt
 
 ################################################################################
 # LOGS & DIAGNOSTICS
@@ -107,7 +96,7 @@ docker-compose.local.yml
 .docker/
 postgres_data/
 mysql_data/
-mongo_data/
+cosmos_data/
 
 ################################################################################
 # DATABASE
@@ -116,7 +105,6 @@ mongo_data/
 *.sqlite
 *.sqlite3
 database.lock
-CosmosDB.Emulator/
 
 ################################################################################
 # OPERATING SYSTEM
@@ -145,6 +133,21 @@ target/failsafe-reports/
 coverage/
 *.exec
 htmlcov/
+jacoco.exec
+jacoco-report/
+
+################################################################################
+# APPLICATION SPECIFIC
+################################################################################
+# H2 Database (if used)
+*.h2.db
+
+# Spring Boot actuator endpoints
+spring-boot-docs/
+
+# Local development overrides
+application-local.properties
+application-dev.properties.local
 
 ################################################################################
 # MISC
@@ -155,3 +158,4 @@ htmlcov/
 *~
 node_modules/
 package-lock.json
+
