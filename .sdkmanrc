@@ -1,0 +1,21 @@
+# SDKMAN version management file
+# This file allows you to specify exact versions of build tools and JDK
+#
+# Installation (Linux/Mac/WSL):
+#   curl -s "https://get.sdkman.io" | bash
+#
+# Usage:
+#   sdk env install    # Install versions specified in this file
+#   sdk env clear      # Clear environment overrides
+#
+# Works on: Linux, Mac, Windows WSL, Git Bash (with installation)
+
+# Java Development Kit - Using Eclipse Temurin (recommended)
+java=21.0.3-tem
+
+# Apache Maven - Build tool for enterprise Java/Spring Boot
+maven=3.9.6
+
+# Gradle - Build tool (used by spring-academy-intro)
+gradle=8.8.1
+
