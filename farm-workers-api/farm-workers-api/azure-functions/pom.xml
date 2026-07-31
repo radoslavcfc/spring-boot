@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        ╔══════════════════════════════════════════════════════════╗
+        ║  Azure Functions for Java                                ║
+        ║  ≈ Azure Functions for .NET (isolated worker model)     ║
+        ║                                                          ║
+        ║  .NET isolated worker:  Program.cs + Function classes   ║
+        ║  Java:                  pom.xml + @FunctionName classes  ║
+        ║                                                          ║
+        ║  Run locally:  mvn azure-functions:run                  ║
+        ║  Deploy:       mvn azure-functions:deploy               ║
+        ║  ≈             func azure functionapp publish <name>    ║
+        ╚══════════════════════════════════════════════════════════╝
+    -->
+
+    <groupId>com.farm</groupId>
+    <artifactId>farm-workers-functions</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <java.version>21</java.version>
+        <azure.functions.java.library.version>3.1.0</azure.functions.java.library.version>
+        <azure.functions.maven.plugin.version>1.30.0</azure.functions.maven.plugin.version>
+        <!-- Function App name in Azure -->
+        <functionAppName>farm-workers-functions</functionAppName>
+        <functionAppRegion>westeurope</functionAppRegion>
+        <functionResourceGroup>farm-workers-rg</functionResourceGroup>
+    </properties>
+
+    <dependencies>
+        <!-- Azure Functions Java Library - the core SDK
+             ≈ Microsoft.Azure.Functions.Worker NuGet -->
+        <dependency>
+            <groupId>com.microsoft.azure.functions</groupId>
+            <artifactId>azure-functions-java-library</artifactId>
+            <version>${azure.functions.java.library.version}</version>
+        </dependency>
+
+        <!-- CosmosDB SDK for trigger/output bindings -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-cosmos</artifactId>
+            <version>4.56.0</version>
+        </dependency>
+
+        <!-- Service Bus SDK for trigger/output bindings -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-messaging-servicebus</artifactId>
+            <version>7.15.1</version>
+        </dependency>
+
+        <!-- Jackson for JSON processing -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                </configuration>
+            </plugin>
+
+            <!--
+                Azure Functions Maven Plugin
+                ≈ Azure Functions Core Tools + dotnet publish
+                mvn azure-functions:run     = func start
+                mvn azure-functions:package = func pack
+                mvn azure-functions:deploy  = func azure functionapp publish
+            -->
+            <plugin>
+                <groupId>com.microsoft.azure</groupId>
+                <artifactId>azure-functions-maven-plugin</artifactId>
+                <version>${azure.functions.maven.plugin.version}</version>
+                <configuration>
+                    <appName>${functionAppName}</appName>
+                    <resourceGroup>${functionResourceGroup}</resourceGroup>
+                    <region>${functionAppRegion}</region>
+                    <runtime>
+                        <os>linux</os>
+                        <javaVersion>21</javaVersion>
+                    </runtime>
+                    <appSettings>
+                        <property>
+                            <name>FUNCTIONS_EXTENSION_VERSION</name>
+                            <value>~4</value>
+                        </property>
+                        <property>
+                            <name>COSMOS_CONNECTION_STRING</name>
+                            <value>${env.COSMOS_CONNECTION_STRING}</value>
+                        </property>
+                        <property>
+                            <name>SERVICEBUS_CONNECTION_STRING</name>
+                            <value>${env.SERVICEBUS_CONNECTION_STRING}</value>
+                        </property>
+                        <property>
+                            <name>STORAGE_CONNECTION_STRING</name>
+                            <value>${env.STORAGE_CONNECTION_STRING}</value>
+                        </property>
+                    </appSettings>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,52 @@
+{
+  "UserConfig": {
+    "Namespaces": [
+      {
+        "Name": "farm-workers-dev",
+        "Queues": [
+          {
+            "Name": "worker-events",
+            "Properties": {
+              "DeadLetteringOnMessageExpiration": true,
+              "DefaultMessageTimeToLive": "PT1H",
+              "MaxDeliveryCount": 3
+            }
+          },
+          {
+            "Name": "work-records-created",
+            "Properties": {
+              "DeadLetteringOnMessageExpiration": true,
+              "DefaultMessageTimeToLive": "PT1H",
+              "MaxDeliveryCount": 3
+            }
+          }
+        ],
+        "Topics": [
+          {
+            "Name": "payroll-events",
+            "Properties": {
+              "DefaultMessageTimeToLive": "PT1H"
+            },
+            "Subscriptions": [
+              {
+                "Name": "payslip-generator",
+                "Properties": {
+                  "MaxDeliveryCount": 3
+                }
+              },
+              {
+                "Name": "accounting-system",
+                "Properties": {
+                  "MaxDeliveryCount": 3
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Logging": {
+      "Type": "File"
+    }
+  }
+}
