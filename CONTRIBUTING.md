@@ -6,7 +6,6 @@ Thank you for your interest in contributing! This guide will help you understand
 
 ## 📋 Table of Contents
 
-- [Code of Conduct](#code-of-conduct)
 - [Getting Started](#getting-started)
 - [Development Workflow](#development-workflow)
 - [Coding Standards](#coding-standards)
@@ -15,12 +14,6 @@ Thank you for your interest in contributing! This guide will help you understand
 - [Testing Requirements](#testing-requirements)
 - [Documentation](#documentation)
 - [Reporting Issues](#reporting-issues)
-
----
-
-## 🤝 Code of Conduct
-
-We are committed to providing a welcoming and inspiring community for all. Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ---
 
