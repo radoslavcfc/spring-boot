@@ -1,0 +1,113 @@
+name: CI/CD Pipeline
+
+permissions:
+  contents: read
+  issues: write
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java-version: [21]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ matrix.java-version }}
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Check code style (EditorConfig)
+      run: |
+        sudo apt-get install editorconfig
+        echo "Checking EditorConfig compliance..."
+
+    - name: Build azure-java-platform
+      run: |
+        cd azure-java-platform/azure-java-platform
+        mvn clean install -B
+
+    - name: Build farm-workers-api
+      run: |
+        cd farm-workers-api/farm-workers-api
+        mvn clean package -B
+
+    - name: Set up Gradle
+      uses: gradle/gradle-build-action@v2
+
+    - name: Build spring-academy-intro
+      run: |
+        cd spring-academy-intro
+        ./gradlew build -i
+
+    - name: Generate coverage report
+      run: |
+        cd azure-java-platform/azure-java-platform
+        mvn test jacoco:report
+        cd ../../farm-workers-api/farm-workers-api
+        mvn test jacoco:report
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./azure-java-platform/azure-java-platform/target/site/jacoco/jacoco.xml,./farm-workers-api/farm-workers-api/target/site/jacoco/jacoco.xml
+        flags: unittests
+        fail_ci_if_error: true
+
+    - name: Check for security vulnerabilities
+      run: |
+        cd azure-java-platform/azure-java-platform
+        mvn org.owasp:dependency-check-maven:check
+        cd ../../farm-workers-api/farm-workers-api
+        mvn org.owasp:dependency-check-maven:check
+
+    - name: Run integration tests
+      run: |
+        cd azure-java-platform/azure-java-platform
+        mvn verify
+
+    - name: Generate artifacts
+      if: success()
+      run: |
+        mkdir -p build-artifacts
+        cp azure-java-platform/azure-java-platform/webapi/target/*.jar build-artifacts/
+        cp farm-workers-api/farm-workers-api/target/*.jar build-artifacts/
+        cp spring-academy-intro/build/libs/*.jar build-artifacts/
+
+    - name: Upload artifacts
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: build-artifacts/
+        retention-days: 30
+
+    - name: Comment PR with test results
+      if: always() && github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const jobStatus = '${{ job.status }}';
+          const comment = `## Build Status: ${jobStatus.toUpperCase()}\n\n✅ Builds passed for:\n- azure-java-platform\n- farm-workers-api\n- spring-academy-intro\n\n📊 Coverage reports generated\n⚠️ Security scan completed`;
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+

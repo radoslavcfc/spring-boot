@@ -84,7 +84,7 @@
                     <region>${functionRegion}</region>
                     <runtime>
                         <os>linux</os>
-                        <javaVersion>17</javaVersion>
+                        <javaVersion>21</javaVersion>
                     </runtime>
                     <appSettings>
                         <property>

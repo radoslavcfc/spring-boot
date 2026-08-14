@@ -1,24 +1,232 @@
-# Gradle / build outputs
+################################################################################
+# BUILD OUTPUTS & ARTIFACTS
+################################################################################
+# Maven
+target/
+**/target/
+*.jar
+*.war
+*.ear
+
+# Gradle
 .gradle/
 build/
 **/build/
+*.gradle.lock
+gradle-app.setting
 
 # Java binaries & class files
 *.class
-bin/
-out/
+*.ctxt
+.classpath
 
-# IntelliJ / IDE
+# Package Files
+*.jar
+*.jar.asc
+*.zip
+
+################################################################################
+# IDE & EDITOR
+################################################################################
+# IntelliJ IDEA / JetBrains
 .idea/
 *.iml
+*.iws
 *.ipr
+*.impl
+.gradle/
+out/
 
-# VS Code
+# Visual Studio Code
 .vscode/
+*.code-workspace
 
-# Maven
-target/
+# Eclipse
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# OS / misc
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+.swp
+.swo
+*~
 .DS_Store
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Miscellaneous IDE files
+*.tmp
+*.bak
+*.swp
+
+################################################################################
+# VERSION CONTROL & LOCAL FILES
+################################################################################
+# Local environment variables (but keep examples)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# SDKMAN local settings
+.sdkmanrc.local
+
+# Git
+.git/
+
+################################################################################
+# OPERATING SYSTEM
+################################################################################
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.lnk
+*.ps1
+
+# Linux
+.directory
+*~
+
+################################################################################
+# LOGS & DIAGNOSTIC FILES
+################################################################################
 *.log
+*.log.*
+logs/
+*.out
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+################################################################################
+# TEMPORARY & CACHE FILES
+################################################################################
+# Maven
+.m2/
+.maven/
+.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+.mvn/timing.properties.lock
+
+# Gradle
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Node (if using any JavaScript tooling)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+
+# Ruby
+Gemfile.lock
+
+# General
+*.tmp
+*.temp
+*.cache
+.cache/
+
+################################################################################
+# RUNTIME & DEPLOYMENT
+################################################################################
+# Azure Functions
+local.settings.json
+Functions.dll
+!Functions.Tests.dll
+
+# Docker
+docker-compose.override.yml
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+terraform.tfvars
+terraform.tfvars.json
+.terraformrc
+terraform.rc
+tfplan
+
+# Environment-specific
+*.pfx
+*.pem
+*.key
+*.cert
+*.crt
+
+################################################################################
+# DATABASE & STORAGE
+################################################################################
+*.db
+*.sqlite
+*.sqlite3
+*.h2.db
+database.lock
+
+# Azure Emulator
+CosmosDB.Emulator/
+.DiscoveryStore/
+
+################################################################################
+# BUILD TOOL OUTPUTS
+################################################################################
+# Checkstyle
+checkstyle-result.xml
+
+# JaCoCo
+*.exec
+coverage.xml
+
+# Test reports
+target/surefire-reports/
+target/failsafe-reports/
+
+# Coverage reports
+coverage/
+htmlcov/
+dist/
+build/

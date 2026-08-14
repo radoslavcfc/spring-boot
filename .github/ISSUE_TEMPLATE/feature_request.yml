@@ -1,0 +1,67 @@
+name: Feature Request
+description: Suggest an idea for improvement
+labels: ["enhancement", "triage"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please describe the feature clearly.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please verify
+      options:
+        - label: I've checked existing issues
+          required: true
+        - label: This is not a duplicate
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Describe the problem this feature would solve
+      placeholder: |
+        I'm trying to [accomplish goal], but [current limitation].
+        This is frustrating because [consequence].
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your solution
+      placeholder: Here's what I propose...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Other solutions you've considered
+      placeholder: |
+        - Alternative 1: ...
+        - Alternative 2: ...
+
+  - type: dropdown
+    id: project
+    attributes:
+      label: Project
+      options:
+        - azure-java-platform
+        - farm-workers-api
+        - spring-academy-intro
+        - Multiple projects
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Screenshots, links, examples
+      placeholder: Add any other context here
+

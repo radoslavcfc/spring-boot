@@ -1,21 +1,19 @@
 ################################################################################
 # BUILD OUTPUTS & ARTIFACTS
 ################################################################################
-# Maven
-target/
-**/target/
-*.jar
-*.war
-*.ear
-
 # Gradle
 .gradle/
 build/
 **/build/
+*.gradle.lock
 
 # Java binaries & class files
 *.class
 out/
+
+# Package Files
+*.jar
+*.jar.asc
 
 ################################################################################
 # IDE & EDITOR
@@ -34,38 +32,34 @@ out/
 .project
 .settings/
 
-################################################################################
-# TERRAFORM & INFRASTRUCTURE
-################################################################################
-# Terraform
-.terraform/
-.terraform.lock.hcl
-terraform.tfvars
-terraform.tfvars.json
-*.tfstate
-*.tfstate.*
-backend.hcl
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-.terraformrc
-terraform.rc
-tfplan
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
 
-# Azure Files
-.azure/
-*.azurite.db
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Vim
+.swp
+.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
 
 ################################################################################
-# AZURE FUNCTIONS
+# GRADLE WRAPPER
 ################################################################################
-# Azure Functions local settings
-local.settings.json
-bin/
-obj/
-*.user
-.funcpack/
+# Keep gradle wrapper files, but ignore build artifacts
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
 
 ################################################################################
 # ENVIRONMENT & CONFIGURATION
@@ -76,16 +70,7 @@ obj/
 !.env.example
 
 # Local settings
-local.settings.json
 .sdkmanrc.local
-
-# Credentials and secrets (NEVER commit these)
-*.pem
-*.key
-*.cert
-*.pfx
-servicebus-connection-string.txt
-cosmos-connection-string.txt
 
 ################################################################################
 # LOGS & DIAGNOSTICS
@@ -94,29 +79,6 @@ cosmos-connection-string.txt
 *.log.*
 logs/
 *.out
-diagnostics/
-
-################################################################################
-# DOCKER & CONTAINERS
-################################################################################
-# Docker compose overrides
-docker-compose.override.yml
-docker-compose.local.yml
-
-# Container data
-.docker/
-postgres_data/
-mysql_data/
-mongo_data/
-
-################################################################################
-# DATABASE
-################################################################################
-*.db
-*.sqlite
-*.sqlite3
-database.lock
-CosmosDB.Emulator/
 
 ################################################################################
 # OPERATING SYSTEM
@@ -126,6 +88,8 @@ CosmosDB.Emulator/
 .AppleDouble
 .LSOverride
 ._*
+.Spotlight-V100
+.Trashes
 
 # Windows
 Thumbs.db
@@ -140,8 +104,8 @@ $RECYCLE.BIN/
 ################################################################################
 # TEST & COVERAGE REPORTS
 ################################################################################
-target/surefire-reports/
-target/failsafe-reports/
+build/test-results/
+build/reports/
 coverage/
 *.exec
 htmlcov/
@@ -155,3 +119,14 @@ htmlcov/
 *~
 node_modules/
 package-lock.json
+
+################################################################################
+# Spring Boot Specific
+################################################################################
+# Spring Boot Actuator output
+spring-boot-docs/
+
+# Local application properties
+application-local.properties
+application-dev.properties.local
+
