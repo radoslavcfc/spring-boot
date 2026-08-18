@@ -66,4 +66,6 @@ class CashCardApplicationTests {
         ResponseEntity<String> response = restTemplate.getForEntity("/cashcards", String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
+
+    //4: Enhance the List Test
 }
