@@ -130,3 +130,4 @@ spring-boot-docs/
 application-local.properties
 application-dev.properties.local
 
+/gradle.properties
