@@ -1,6 +1,18 @@
 package config;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import javax.sql.DataSource;
+
+import rewards.RewardNetwork;
+import rewards.internal.RewardNetworkImpl;
+import rewards.internal.account.AccountRepository;
+import rewards.internal.account.JdbcAccountRepository;
+import rewards.internal.restaurant.JdbcRestaurantRepository;
+import rewards.internal.restaurant.RestaurantRepository;
+import rewards.internal.reward.JdbcRewardRepository;
+import rewards.internal.reward.RewardRepository;
 
 /**
  * TODO-00: In this lab, you are going to exercise the following:
@@ -12,7 +24,7 @@ import javax.sql.DataSource;
  *   (WITHOUT using Spring testContext framework)
  *
  * TODO-01: Make this class a Spring configuration class
- * - Use an appropriate annotation.
+ * - Use an appropriate annotation. *
  *
  * TODO-02: Define four empty @Bean methods, one for the
  *          reward-network and three for the repositories.
@@ -41,12 +53,40 @@ import javax.sql.DataSource;
  * - Note that return type of each bean method should be an interface
  *   not an implementation.
  */
-
+@Configuration
 public class RewardsConfig {
 
 	// Set this by adding a constructor.
 	private DataSource dataSource;
 
-}
+	public RewardsConfig(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 
+	@Bean
+	public RewardNetwork rewardNetwork() {
+		return new RewardNetworkImpl(accountRepository(), restaurantRepository(), rewardRepository());
+	}
+
+	@Bean
+	public AccountRepository accountRepository() {
+		JdbcAccountRepository repository = new JdbcAccountRepository();
+		repository.setDataSource(dataSource);
+		return repository;
+	}
+
+	@Bean
+	public RestaurantRepository restaurantRepository() {
+		JdbcRestaurantRepository repository = new JdbcRestaurantRepository();
+		repository.setDataSource(dataSource);
+		return repository;
+	}
+
+	@Bean
+	public RewardRepository rewardRepository() {
+		JdbcRewardRepository repository = new JdbcRewardRepository();
+		repository.setDataSource(dataSource);
+		return repository;
+	}
+}
 
