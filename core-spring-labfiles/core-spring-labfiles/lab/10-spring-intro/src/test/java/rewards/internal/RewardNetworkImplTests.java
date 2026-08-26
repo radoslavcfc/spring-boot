@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Configures the implementation with stub repositories
  * containing dummy data for fast in-memory testing without
  * the overhead of an external data source.
- * 
+ *
  * Besides helping catch bugs early, tests are a great way
  * for a new developer to learn an API as he or she can see the
  * API in action. Tests also help validate a design as they
@@ -49,7 +49,7 @@ public class RewardNetworkImplTests {
 	// - Remove the @Disabled annotation below.
 	// - Run this JUnit test. Verify it passes.
 	@Test
-	@Disabled
+//	@Disabled
 	public void testRewardForDining() {
 		// create a new dining of 100.00 charged to credit card '1234123412341234' by merchant '123457890' as test input
 		Dining dining = Dining.createDining("100.00", "1234123412341234", "1234567890");
