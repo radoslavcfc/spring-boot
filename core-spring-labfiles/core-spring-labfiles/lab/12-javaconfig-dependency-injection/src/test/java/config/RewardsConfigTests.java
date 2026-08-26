@@ -15,8 +15,7 @@ import rewards.internal.reward.RewardRepository;
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test the Spring configuration class to ensure it is creating the right
@@ -39,18 +38,18 @@ public class RewardsConfigTests {
 	@Test
 	public void getBeans() {
 		RewardNetwork rewardNetwork = rewardsConfig.rewardNetwork();
-		assertTrue(rewardNetwork instanceof RewardNetworkImpl);
+        assertInstanceOf(RewardNetworkImpl.class, rewardNetwork);
 
 		AccountRepository accountRepository = rewardsConfig.accountRepository();
-		assertTrue(accountRepository instanceof JdbcAccountRepository);
+		assertInstanceOf(JdbcAccountRepository.class, accountRepository);
 		checkDataSource(accountRepository);
 
 		RestaurantRepository restaurantRepository = rewardsConfig.restaurantRepository();
-		assertTrue(restaurantRepository instanceof JdbcRestaurantRepository);
+		assertInstanceOf(JdbcRestaurantRepository.class, restaurantRepository);
 		checkDataSource(restaurantRepository);
 
 		RewardRepository rewardsRepository = rewardsConfig.rewardRepository();
-		assertTrue(rewardsRepository instanceof JdbcRewardRepository);
+		assertInstanceOf(JdbcRewardRepository.class, rewardsRepository);
 		checkDataSource(rewardsRepository);
 	}
 
