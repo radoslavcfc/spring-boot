@@ -1,6 +1,8 @@
 package rewards.internal.restaurant;
 
 import common.money.Percentage;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
@@ -61,7 +63,7 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 	 * restaurants. When the instance of JdbcRestaurantRepository is created, a
 	 * Restaurant cache is populated for read only access
 	 */
-    @Autowired
+
 	public JdbcRestaurantRepository(DataSource dataSource) {
 		this.dataSource = dataSource;
 		this.populateRestaurantCache();
@@ -69,7 +71,7 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 
 	public JdbcRestaurantRepository() {
 	}
-
+    @Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
@@ -93,7 +95,7 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 	 *   construction activity, so using a post-construct, rather than
 	 *   the constructor, is a better practice.
 	 */
-
+    @PostConstruct
 	void populateRestaurantCache() {
 		restaurantCache = new HashMap<String, Restaurant>();
 		String sql = "select MERCHANT_NUMBER, NAME, BENEFIT_PERCENTAGE from T_RESTAURANT";
@@ -168,10 +170,22 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 	 * - Re-run the test and you should be able to see
 	 *   that this method is now being called.
 	 */
-	public void clearRestaurantCache() {
-		restaurantCache.clear();
-	}
+    @PreDestroy
+    public void clearRestaurantCache() {
+        System.out.println("clearRestaurantCache invoked");
 
+        System.out.println("Before clear:");
+        restaurantCache.forEach((key, value) ->
+            System.out.println(key + " = " + value));
+
+        restaurantCache.clear();
+
+        System.out.println("After clear:");
+        restaurantCache.forEach((key, value) ->
+            System.out.println(key + " = " + value));
+
+        System.out.println("After clear size: " + restaurantCache.size());
+    }
 	/**
 	 * Maps a row returned from a query of T_RESTAURANT to a Restaurant object.
 	 *
