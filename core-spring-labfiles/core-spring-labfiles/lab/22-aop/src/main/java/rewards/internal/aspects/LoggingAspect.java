@@ -40,7 +40,7 @@ public class LoggingAspect {
 	// - Decide which advice type is most appropriate
 	// - Write a pointcut expression that selects only find* methods on
 	//    our repository classes.
-@Before("execution(* rewards.internal..*Repository.find*(..))")
+    @Before("execution(* rewards.internal..*Repository.find*(..))")
 	public void implLogging(JoinPoint joinPoint) {
 		// Do not modify this log message or the test will fail
 		logger.info(BEFORE + " advice implementation - " + joinPoint.getTarget().getClass() + //
