@@ -48,7 +48,6 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-
 	public Restaurant findByMerchantNumber(String merchantNumber) {
 		String sql = "select MERCHANT_NUMBER, NAME, BENEFIT_PERCENTAGE, BENEFIT_AVAILABILITY_POLICY"
 				+ " from T_RESTAURANT where MERCHANT_NUMBER = ?";
@@ -177,7 +176,6 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 			return "neverAvailable";
 		}
 	}
-
 
     // The RestaurantRowMapper class is a callback implementation of the RowMapper interface,
     // which is used by the JdbcTemplate to map rows of a ResultSet to Restaurant objects.
