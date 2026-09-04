@@ -2,8 +2,10 @@ package rewards.internal.account;
 
 import common.money.MonetaryAmount;
 import common.money.Percentage;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -42,51 +44,40 @@ public class JdbcAccountRepository implements AccountRepository {
 	// - Let the extractData() method of the ResultSetExtractor to call
 	//   mapAccount() method, which is provided in this class, to do all the work.
     // - Run the JdbcAccountRepositoryTests class. It should pass.
-	public Account findByCreditCard(String creditCardNumber) {
-		String sql = "select a.ID as ID, a.NUMBER as ACCOUNT_NUMBER, a.NAME as ACCOUNT_NAME, c.NUMBER as CREDIT_CARD_NUMBER, " +
-			"	b.NAME as BENEFICIARY_NAME, b.ALLOCATION_PERCENTAGE as BENEFICIARY_ALLOCATION_PERCENTAGE, b.SAVINGS as BENEFICIARY_SAVINGS " +
-			"from T_ACCOUNT a, T_ACCOUNT_CREDIT_CARD c " +
-			"left outer join T_ACCOUNT_BENEFICIARY b " +
-			"on a.ID = b.ACCOUNT_ID " +
-			"where c.ACCOUNT_ID = a.ID and c.NUMBER = ?";
 
-		Account account = null;
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			conn = dataSource.getConnection();
-			ps = conn.prepareStatement(sql);
-			ps.setString(1, creditCardNumber);
-			rs = ps.executeQuery();
-			account = mapAccount(rs);
-		} catch (SQLException e) {
-			throw new RuntimeException("SQL exception occurred finding by credit card number", e);
-		} finally {
-			if (rs != null) {
-				try {
-					// Close to prevent database cursor exhaustion
-					rs.close();
-				} catch (SQLException ex) {
-				}
-			}
-			if (ps != null) {
-				try {
-					// Close to prevent database cursor exhaustion
-					ps.close();
-				} catch (SQLException ex) {
-				}
-			}
-			if (conn != null) {
-				try {
-					// Close to prevent database connection exhaustion
-					conn.close();
-				} catch (SQLException ex) {
-				}
-			}
-		}
-		return account;
-	}
+    //Extractor is defined as an anonymous inner class that implements ResultSetExtractor<Account> interface.
+
+//    private ResultSetExtractor<Account> accountExtractor = new ResultSetExtractor<Account>() {
+//        @Override
+//        public Account extractData(ResultSet rs) throws SQLException {
+//            return mapAccount(rs);
+//        }
+//    };
+
+    private class AccountExtractor implements ResultSetExtractor<Account> {
+
+        public Account extractData(ResultSet rs) throws SQLException, DataAccessException {
+            return mapAccount(rs);
+        }
+    }
+
+    private ResultSetExtractor<Account> accountExtractor = new AccountExtractor();
+
+	public Account findByCreditCard(String creditCardNumber) {
+        String sql = "select a.ID as ID, a.NUMBER as ACCOUNT_NUMBER, a.NAME as ACCOUNT_NAME, c.NUMBER as CREDIT_CARD_NUMBER, " +
+            "	b.NAME as BENEFICIARY_NAME, b.ALLOCATION_PERCENTAGE as BENEFICIARY_ALLOCATION_PERCENTAGE, b.SAVINGS as BENEFICIARY_SAVINGS " +
+            "from T_ACCOUNT a, T_ACCOUNT_CREDIT_CARD c " +
+            "left outer join T_ACCOUNT_BENEFICIARY b " +
+            "on a.ID = b.ACCOUNT_ID " +
+            "where c.ACCOUNT_ID = a.ID and c.NUMBER = ?";
+
+//         return jdbcTemplate.queryForObject(sql,
+//                    (rs, rowNum) -> mapAccount(rs),
+//                    creditCardNumber
+//                );
+
+        return jdbcTemplate.query(sql, accountExtractor, creditCardNumber);
+    }
 
 	// TODO-06: Refactor this method to use JdbcTemplate.
 	// - Note that an account has multiple beneficiaries
@@ -104,6 +95,7 @@ public class JdbcAccountRepository implements AccountRepository {
                 beneficiary.getName()
             );
         }
+
 	}
 
 	/**
