@@ -2,6 +2,8 @@ package rewards.internal.restaurant;
 
 import common.money.Percentage;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import rewards.Dining;
 import rewards.internal.account.Account;
 
@@ -38,28 +40,36 @@ import java.sql.SQLException;
 
 public class JdbcRestaurantRepository implements RestaurantRepository {
 
-	private DataSource dataSource;
+    private JdbcTemplate jdbcTemplate;
 
-	public JdbcRestaurantRepository(DataSource dataSource) {
-		this.dataSource = dataSource;
+	public JdbcRestaurantRepository(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	public Restaurant findByMerchantNumber(String merchantNumber) {
 		String sql = "select MERCHANT_NUMBER, NAME, BENEFIT_PERCENTAGE, BENEFIT_AVAILABILITY_POLICY"
 				+ " from T_RESTAURANT where MERCHANT_NUMBER = ?";
-		Restaurant restaurant = null;
 
-		try (Connection conn = dataSource.getConnection();
-			 PreparedStatement ps = conn.prepareStatement(sql) ){
-			ps.setString(1, merchantNumber);
-			ResultSet rs = ps.executeQuery();
-			advanceToNextRow(rs);
-			restaurant = mapRestaurant(rs);
-		} catch (SQLException e) {
-			throw new RuntimeException("SQL exception occurred finding by merchant number", e);
-		}
+        // Using lambda expression to mapRestaurant
+        //return jdbcTemplate.queryForObject(sql,(rs, rowNum) -> this.mapRestaurant(rs), merchantNumber);
 
-		return restaurant;
+        // Using the inner class RestaurantRowMapper to mapRestaurant
+        //return jdbcTemplate.queryForObject(sql, new RestaurantRowMapper(), merchantNumber);
+
+        //Using method reference to mapRestaurant
+        return jdbcTemplate.queryForObject(sql, this::mapRestaurant, merchantNumber);
+
+//		try (Connection conn = dataSource.getConnection();
+//			 PreparedStatement ps = conn.prepareStatement(sql) ){
+//			ps.setString(1, merchantNumber);
+//			ResultSet rs = ps.executeQuery();
+//			advanceToNextRow(rs);
+//			restaurant = mapRestaurant(rs);
+//		} catch (SQLException e) {
+//			throw new RuntimeException("SQL exception occurred finding by merchant number", e);
+//		}
+//
+//		return restaurant;
 	}
 
 	/**
@@ -78,6 +88,25 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 		restaurant.setBenefitAvailabilityPolicy(mapBenefitAvailabilityPolicy(rs));
 		return restaurant;
 	}
+
+    /**
+     * Maps a row returned from a query of T_RESTAURANT to a Restaurant object.
+     * It matches the callback signature of the RowMapper interface, which includes the row number.
+     * @param rs the result set with its cursor positioned at the current row
+     * @param rowNum the row number
+     */
+    private Restaurant mapRestaurant(ResultSet rs, int rowNum) throws SQLException {
+        // Get the row column data
+        String name = rs.getString("NAME");
+        String number = rs.getString("MERCHANT_NUMBER");
+        Percentage benefitPercentage = Percentage.valueOf(rs.getString("BENEFIT_PERCENTAGE"));
+
+        // Map to the object
+        Restaurant restaurant = new Restaurant(number, name);
+        restaurant.setBenefitPercentage(benefitPercentage);
+        restaurant.setBenefitAvailabilityPolicy(mapBenefitAvailabilityPolicy(rs));
+        return restaurant;
+    }
 
 	/**
 	 * Advances a ResultSet to the next row and throws an exception if there are no rows.
@@ -100,7 +129,7 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 	 * More types could be added easily by enhancing this method. For example, 'W' for 'Weekdays only' or 'M' for 'Max
 	 * Rewards per Month'. Some of these types might require additional database column values to be configured, for
 	 * example a 'MAX_REWARDS_PER_MONTH' data column.
-	 * 
+	 *
 	 * @param rs the result set used to map the policy object from database column values
 	 * @return the matching benefit availability policy
 	 * @throws IllegalArgumentException if the mapping could not be performed
@@ -145,5 +174,16 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 			return "neverAvailable";
 		}
 	}
+
+    // The RestaurantRowMapper class is a callback implementation of the RowMapper interface,
+    // which is used by the JdbcTemplate to map rows of a ResultSet to Restaurant objects.
+    // It delegates the actual mapping logic to the mapRestaurant method,
+    // which extracts the necessary data from the ResultSet and constructs a Restaurant object.
+
+    private class RestaurantRowMapper implements RowMapper<Restaurant> {
+        public Restaurant mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return mapRestaurant(rs);
+        }
+    }
 }
 
