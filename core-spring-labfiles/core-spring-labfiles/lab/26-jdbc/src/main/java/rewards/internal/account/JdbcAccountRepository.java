@@ -30,12 +30,10 @@ import java.sql.SQLException;
 //   object using the given DataSource object.
 public class JdbcAccountRepository implements AccountRepository {
 
-	private DataSource dataSource;
 	private JdbcTemplate jdbcTemplate;
 
-	public JdbcAccountRepository(DataSource dataSource) {
-		this.dataSource = dataSource;
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+	public JdbcAccountRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
 	}
 
 	// TODO-07 (Optional): Refactor this method using JdbcTemplate and ResultSetExtractor
