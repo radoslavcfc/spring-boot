@@ -15,10 +15,10 @@ import rewards.internal.reward.RewardRepository;
 
 /**
  * Rewards an Account for Dining at a Restaurant.
- * 
+ *
  * The sole Reward Network implementation. This object is an application-layer service responsible for coordinating with
  * the domain-layer to carry out the process of rewarding benefits to accounts for dining.
- * 
+ *
  * Said in other words, this class implements the "reward account for dining" use case.
  */
 public class RewardNetworkImpl implements RewardNetwork {
@@ -41,10 +41,10 @@ public class RewardNetworkImpl implements RewardNetwork {
 		this.restaurantRepository = restaurantRepository;
 		this.rewardRepository = rewardRepository;
 	}
-	
+
 	@Transactional
 	public RewardConfirmation rewardAccountFor(Dining dining) {
-		Account account = accountRepository.findByCreditCard(dining.getCreditCardNumber());
+		Account account = accountRepository.findByCreditCardNumber(dining.getCreditCardNumber());
 		Restaurant restaurant = restaurantRepository.findByMerchantNumber(dining.getMerchantNumber());
 		MonetaryAmount amount = restaurant.calculateBenefitFor(account, dining);
 		AccountContribution contribution = account.makeContribution(amount);
