@@ -116,14 +116,18 @@ public class AccountController {
 	// a. Respond to a POST /accounts/{accountId}/beneficiaries
 	// b. Extract a beneficiary name from the incoming request
 	// c. Indicate a "201 Created" status
-	public ResponseEntity<Void> addBeneficiary(long accountId, String beneficiaryName) {
+
+    @PostMapping(value = "/accounts/{accountId}/beneficiaries")
+	public ResponseEntity<Void> addBeneficiary(@PathVariable("accountId") long accountId, @RequestBody String beneficiaryName) {
 
 		// TODO-11: Create a ResponseEntity containing the location of the newly
 		// created beneficiary.
 		// a. Use accountManager's addBeneficiary method to add a beneficiary to an account
 		// b. Use the entityWithLocation method - like we did for createAccount().
-
-		return null;  // Modify this to return something
+        accountManager.addBeneficiary(accountId, beneficiaryName);
+        var location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(beneficiaryName).toUri();
+        return ResponseEntity.created(location).build();
 	}
 
 	/**
@@ -133,7 +137,8 @@ public class AccountController {
 	// TODO-12: Complete this method by adding the appropriate annotations to:
 	// a. Respond to a DELETE to /accounts/{accountId}/beneficiaries/{beneficiaryName}
 	// b. Indicate a "204 No Content" status
-	public void removeBeneficiary(long accountId, String beneficiaryName) {
+    @DeleteMapping(value = "/accounts/{accountId}/beneficiaries/{beneficiaryName}")
+	public ResponseEntity<Void> removeBeneficiary(@PathVariable("accountId") long accountId, @PathVariable("beneficiaryName") String beneficiaryName) {
 		Account account = accountManager.getAccount(accountId);
 		if (account == null) {
 			throw new IllegalArgumentException("No such account with id " + accountId);
@@ -150,6 +155,7 @@ public class AccountController {
 		}
 
 		accountManager.removeBeneficiary(accountId, beneficiaryName, new HashMap<String, Percentage>());
+        return ResponseEntity.noContent().build();
 	}
 
 	/**
