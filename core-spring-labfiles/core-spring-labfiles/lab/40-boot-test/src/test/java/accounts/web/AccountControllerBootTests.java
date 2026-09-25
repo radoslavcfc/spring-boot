@@ -77,11 +77,11 @@ public class AccountControllerBootTests {
 	@Test
 	public void createAccount() throws Exception {
 
-		//Account testAccount = new Account("1234512345", "Mary Jones");
-		//testAccount.setEntityId(21L);
+		Account testAccount = new Account("1234512345", "Mary Jones");
+		testAccount.setEntityId(21L);
 
-		//given(accountManager.save(any(Account.class)))
-		//		.willReturn(testAccount);
+		given(accountManager.save(any(Account.class)))
+				.willReturn(testAccount);
 
 		// (Write code here)
 		// Use mockMvc to perform HTTP Post operation to "/accounts"
