@@ -92,7 +92,13 @@ public class AccountControllerBootTests {
 		// - Verify that the response status is 201
 		// - Verify that the response "Location" header contains "http://localhost/accounts/21"
 
-		//verify(accountManager).save(any(Account.class));
+		mockMvc.perform(post("/accounts")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(testAccount)))
+				.andExpect(status().isCreated())
+				.andExpect(header().string("Location", "http://localhost/accounts/21"));
+
+		verify(accountManager).save(any(Account.class));
 
 	}
 
