@@ -46,7 +46,7 @@ public class AccountControllerTests {
     private AccountService accountService;
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(roles = {"INVALID"})
     void accountSummary_with_invalid_role_should_return_403() throws Exception {
 
@@ -55,7 +55,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser( roles = {"USER"})
     public void accountDetails_with_USER_role_should_return_200() throws Exception {
 
@@ -66,7 +66,8 @@ public class AccountControllerTests {
         mockMvc.perform(get("/accounts/0"))
                .andExpect(status().isOk())
                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-               .andExpect(jsonPath("name").value("John Doe")).andExpect(jsonPath("number").value("1234567890"));
+               .andExpect(jsonPath("name").value("John Doe"))
+            .andExpect(jsonPath("number").value("1234567890"));
 
         // verify
         verify(accountManager).getAccount(0L);
@@ -74,7 +75,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(username = "user", password = "user")
     public void accountDetails_with_user_credentials_should_return_200() throws Exception {
 
@@ -85,7 +86,8 @@ public class AccountControllerTests {
         mockMvc.perform(get("/accounts/0"))
                .andExpect(status().isOk())
                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-               .andExpect(jsonPath("name").value("John Doe")).andExpect(jsonPath("number").value("1234567890"));
+               .andExpect(jsonPath("name").value("John Doe"))
+               .andExpect(jsonPath("number").value("1234567890"));
 
         // verify
         verify(accountManager).getAccount(0L);
@@ -93,7 +95,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(username = "admin", password = "admin")
     public void accountDetails_with_admin_credentials_should_return_200() throws Exception {
 
@@ -112,7 +114,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(username = "superadmin", password = "superadmin")
     public void accountDetails_with_superadmin_credentials_should_return_200() throws Exception {
 
@@ -128,11 +130,10 @@ public class AccountControllerTests {
 
         // verify
         verify(accountManager).getAccount(0L);
-
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(roles = {"USER"})
     public void accountDetailsFail_test_with_USER_role_should_proceed_successfully() throws Exception {
 
@@ -147,7 +148,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(roles = {"ADMIN"})
     public void accountSummary_with_ADMIN_role_should_return_200() throws Exception {
 
@@ -165,7 +166,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(roles = {"ADMIN", "SUPERADMIN"})
     public void createAccount_with_ADMIN_or_SUPERADMIN_role_should_return_201() throws Exception {
 
@@ -191,14 +192,22 @@ public class AccountControllerTests {
     //    this testing because security failure will prevent
     //    calling a method of a dependency.)
     @Test
+    // @Disabled
+    @WithMockUser(roles = {"USER"})
     public void createAccount_with_USER_role_should_return_403() throws Exception {
 
+        Account testAccount = new Account("1234512345", "Mary Jones");
+        testAccount.setEntityId(21L);
 
-
+        mockMvc.perform(post("/accounts")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(testAccount))
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isForbidden());
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(roles = {"SUPERADMIN"})
     public void getBeneficiary_with_SUPERADMIN_role_should_return_200() throws Exception {
 
@@ -216,7 +225,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(roles = {"ADMIN", "SUPERADMIN"})
     public void addBeneficiary_with_ADMIN_or_SUPERADMIN_role_should_return_201() throws Exception {
 
@@ -226,7 +235,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(roles = {"USER"})
     public void addBeneficiary_with_USER_role_should_return_403() throws Exception {
 
@@ -235,7 +244,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(roles = {"SUPERADMIN"})
     public void removeBeneficiary_with_SUPERADMIN_role_should_return_204() throws Exception {
 
@@ -251,7 +260,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(roles = {"USER", "ADMIN"})
     public void removeBeneficiary_with_USER_or_ADMIN_role_should_return_403() throws Exception {
 
@@ -265,7 +274,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     @WithMockUser(roles = {"SUPERADMIN"})
     public void removeBeneficiaryFail_test_with_SUPERADMIN_role_should_proceed_successfully() throws Exception {
         Account account = new Account("1234567890", "John Doe");
