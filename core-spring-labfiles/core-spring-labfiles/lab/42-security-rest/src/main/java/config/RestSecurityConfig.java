@@ -4,6 +4,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.core.userdetails.User;
@@ -35,6 +36,11 @@ public class RestSecurityConfig {
                 //   for all roles - "USER", "ADMIN", "SUPERADMIN"
 
                 // Deny any request that doesn't match any authorization rule
+                .requestMatchers(HttpMethod.DELETE,"/accounts/**").hasRole("SUPERADMIN")
+                .requestMatchers(HttpMethod.POST,"/accounts/**").hasAnyRole("ADMIN","SUPERADMIN")
+                .requestMatchers(HttpMethod.PUT,"/accounts/**").hasAnyRole("ADMIN","SUPERADMIN")
+                .requestMatchers(HttpMethod.GET,"/accounts/**").hasAnyRole("USER","ADMIN","SUPERADMIN")
+                .requestMatchers(HttpMethod.GET,"/authorities").hasAnyRole("USER","ADMIN","SUPERADMIN")
                 .anyRequest().denyAll())
         .httpBasic(withDefaults())
         .csrf(CsrfConfigurer::disable);
@@ -45,7 +51,7 @@ public class RestSecurityConfig {
 
 	// TODO-14b (Optional): Remove the InMemoryUserDetailsManager definition
 	// - Comment the @Bean annotation below
-	
+
 	@Bean
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
 
@@ -59,7 +65,7 @@ public class RestSecurityConfig {
 
 		return new InMemoryUserDetailsManager(user /* Add new users comma-separated here */);
 	}
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
     	return PasswordEncoderFactories.createDelegatingPasswordEncoder();
