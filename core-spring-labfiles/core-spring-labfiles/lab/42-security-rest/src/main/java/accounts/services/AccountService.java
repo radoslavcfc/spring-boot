@@ -1,5 +1,6 @@
 package accounts.services;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,10 @@ public class AccountService {
     //       the value of the logged-in principal's
     //       username, which can be accessed as
     //       principal.username or authentication.name.
-    //
-    //@PreAuthorize(/* Add code here */)
+
+    @PreAuthorize("hasRole('ADMIN') && #username == principal.username")
+    //@PreAuthorize("hasRole('ADMIN') && #username == authentication.name")
+
     public List<String> getAuthoritiesForUser(String username) {
 
         // TODO-08: Retrieve authorities (roles) for the logged-in user
