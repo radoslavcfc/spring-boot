@@ -59,6 +59,11 @@ import config.AppConfig;
  *   info gets displayed
  *
  * TODO-07 (Optional): Add additional properties to the info endpoint
+ management.info.java.enabled=true
+
+ management.info.env.enabled=true
+ info.restaurant.location=New York
+ info.restaurant.discountPercentage=10
 
  *
  * ------------------------------------------------
