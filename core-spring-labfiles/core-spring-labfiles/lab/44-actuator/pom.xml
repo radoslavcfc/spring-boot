@@ -40,11 +40,20 @@
         </dependency>
 
          <!-- TO-DO-01: Note that the Actuator starter is already here for you. -->
-          <dependency>
-               <groupId>org.springframework.boot</groupId>
-               <artifactId>spring-boot-starter-actuator</artifactId>
-          </dependency>
+           <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+           </dependency>
 
+           <!-- Add AOP support so @Timed annotations are processed -->
+           <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+           </dependency>
+           <dependency>
+               <groupId>io.micrometer</groupId>
+               <artifactId>micrometer-registry-prometheus</artifactId>
+           </dependency>
           <!-- Automatic application restart -->
           <dependency>
                <groupId>org.springframework.boot</groupId>
@@ -52,6 +61,15 @@
             <scope>runtime</scope>
             <optional>true</optional>
           </dependency>
+          <dependency>
+             <groupId>org.springframework.boot</groupId>
+             <artifactId>spring-boot-starter-security</artifactId>
+          </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -60,7 +78,15 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <!-- TO-DO-06: Add build-info goal -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
         </plugins>
     </build>
 </project>
