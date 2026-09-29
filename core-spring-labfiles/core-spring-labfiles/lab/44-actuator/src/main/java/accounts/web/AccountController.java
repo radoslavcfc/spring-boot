@@ -55,7 +55,8 @@ public class AccountController {
 	 */
 	@GetMapping(value = "/accounts")
 	public List<Account> accountSummary() {
-		return accountManager.getAllAccounts();
+        logger.debug("Logging message within accountSummary()");
+        return accountManager.getAllAccounts();
 	}
 
 	/**
