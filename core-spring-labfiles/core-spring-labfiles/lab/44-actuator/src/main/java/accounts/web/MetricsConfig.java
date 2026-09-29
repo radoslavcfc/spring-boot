@@ -5,6 +5,9 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
+// This file was added by GitHub Copilot and not part of the original lab files. It is needed to make the @Timed annotation work.
+
 @Configuration
 public class MetricsConfig {
 
