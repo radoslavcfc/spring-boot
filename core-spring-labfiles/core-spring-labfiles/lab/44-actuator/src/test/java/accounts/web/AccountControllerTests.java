@@ -44,7 +44,7 @@ public class AccountControllerTests {
 	// TODO-19: Test the actuator endpoints
 	// - Remove @Disabled annotation below
 	// - Run this test - it should pass
-	@Disabled
+	// @Disabled
 	public void testHandleDetailsRequest() {
 		Account account = controller.accountDetails(0);
 		assertNotNull(account);
