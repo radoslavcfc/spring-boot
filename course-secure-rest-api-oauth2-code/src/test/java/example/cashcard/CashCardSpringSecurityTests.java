@@ -5,7 +5,6 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -15,6 +14,9 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
@@ -92,15 +94,23 @@ public class CashCardSpringSecurityTests {
 	@TestConfiguration
 	static class TestJwtConfiguration {
 		@Bean
-		JwtEncoder jwtEncoder(@Value("classpath:authz.pub") RSAPublicKey pub,
-							  @Value("classpath:authz.pem") RSAPrivateKey pem) {
-			RSAKey key = new RSAKey.Builder(pub).privateKey(pem).build();
+		KeyPair testKeyPair() throws NoSuchAlgorithmException {
+			KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+			generator.initialize(2048);
+			return generator.generateKeyPair();
+		}
+
+		@Bean
+		JwtEncoder jwtEncoder(KeyPair testKeyPair) {
+			RSAKey key = new RSAKey.Builder((RSAPublicKey) testKeyPair.getPublic())
+					.privateKey((RSAPrivateKey) testKeyPair.getPrivate()).build();
 			return new NimbusJwtEncoder(new ImmutableJWKSet<>(new JWKSet(key)));
 		}
 
 		@Bean
-		JwtDecoder jwtDecoder(@Value("classpath:authz.pub") RSAPublicKey pub) {
-			NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withPublicKey(pub).build();
+		JwtDecoder jwtDecoder(KeyPair testKeyPair) {
+			NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder
+					.withPublicKey((RSAPublicKey) testKeyPair.getPublic()).build();
 			OAuth2TokenValidator<Jwt> defaults = JwtValidators.createDefaultWithIssuer("http://localhost:9000");
 			OAuth2TokenValidator<Jwt> audience = new JwtClaimValidator<List<Object>>(JwtClaimNames.AUD,
 					(aud) -> !Collections.disjoint(aud, Collections.singleton("cashcard-client")));
