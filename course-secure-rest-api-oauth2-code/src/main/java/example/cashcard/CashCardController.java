@@ -3,7 +3,6 @@ package example.cashcard;
 import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,22 +26,20 @@ public class CashCardController {
         this.cashCards = cashCards;
     }
 
-    @PostAuthorize("returnObject.body.owner == authentication.name")
     @GetMapping("/{requestedId}")
     public ResponseEntity<CashCard> findById(@PathVariable Long requestedId) {
         return this.cashCards.findById(requestedId)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<CashCard> createCashCard(@RequestBody CashCardRequest cashCardRequest, UriComponentsBuilder ucb, @CurrentOwner String owner) {
-        CashCard cashCard = new CashCard(cashCardRequest.amount(), owner);
-        CashCard savedCashCard = this.cashCards.save(cashCard);
+    private ResponseEntity<CashCard> createCashCard(@RequestBody CashCard newCashCardRequest, UriComponentsBuilder ucb) {
+        CashCard savedCashCard = cashCards.save(newCashCardRequest);
         URI locationOfNewCashCard = ucb
-                .path("cashcards/{id}")
-                .buildAndExpand(savedCashCard.id())
-                .toUri();
+            .path("cashcards/{id}")
+            .buildAndExpand(savedCashCard.id())
+            .toUri();
         return ResponseEntity.created(locationOfNewCashCard).body(savedCashCard);
     }
 
