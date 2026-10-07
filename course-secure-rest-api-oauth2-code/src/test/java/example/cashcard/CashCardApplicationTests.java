@@ -42,8 +42,7 @@ class CashCardApplicationTests {
                 .contentType("application/json")
                 .content("""
                         {
-                            "amount" : 250.00,
-                            "owner"  : "sarah1"
+                            "amount" : 250.00
                         }
                         """))
             .andExpect(status().isCreated())
@@ -53,6 +52,22 @@ class CashCardApplicationTests {
         this.mvc.perform(get(location))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.amount").value(250.00))
+            .andExpect(jsonPath("$.owner").value("sarah1"));
+    }
+
+    @Test
+    @DirtiesContext
+    void shouldNotCreateACashCardForADifferentUser() throws Exception {
+        this.mvc.perform(post("/cashcards")
+                .with(csrf())
+                .contentType("application/json")
+                .content("""
+                        {
+                            "amount" : 250.00,
+                            "owner"  : "not-sarah1"
+                        }
+                        """))
+            .andExpect(status().isCreated())
             .andExpect(jsonPath("$.owner").value("sarah1"));
     }
 
