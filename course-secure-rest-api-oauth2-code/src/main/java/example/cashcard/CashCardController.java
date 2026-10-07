@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,16 +46,28 @@ public class CashCardController {
         return ResponseEntity.created(locationOfNewCashCard).body(savedCashCard);
     }
 
-    @GetMapping
-    public ResponseEntity<Iterable<CashCard>> findAll(Authentication authentication) {
-//        var filtered = new ArrayList<CashCard>();
-//        this.cashCards.findAll().forEach(cashCard -> {
-//            if (cashCard.owner().equals(authentication.getName())) {
-//                filtered.add(cashCard);
-//            }
-//        });
+//    @GetMapping
+//    public ResponseEntity<Iterable<CashCard>> findAll(@CurrentSecurityContext(expression = "authentication")Authentication authentication) {
+////        var filtered = new ArrayList<CashCard>();
+////        this.cashCards.findAll().forEach(cashCard -> {
+////            if (cashCard.owner().equals(authentication.getName())) {
+////                filtered.add(cashCard);
+////            }
+////        });
+//
+//        var result = this.cashCards.findByOwner(authentication.getName());
+//        return ResponseEntity.ok(result);
+//    }
 
-        var result = this.cashCards.findByOwner(authentication.getName());
+//    @GetMapping
+//    public ResponseEntity<Iterable<CashCard>> findAll(@CurrentSecurityContext(expression = "authentication.name")String owner) {
+//        var result = this.cashCards.findByOwner(owner);
+//        return ResponseEntity.ok(result);
+//    }
+
+    @GetMapping
+    public ResponseEntity<Iterable<CashCard>> findAll(@CurrentOwner String owner) {
+        var result = this.cashCards.findByOwner(owner);
         return ResponseEntity.ok(result);
     }
 }
