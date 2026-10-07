@@ -1,8 +1,10 @@
 package example.cashcard;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,7 +46,15 @@ public class CashCardController {
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<CashCard>> findAll() {
-        return ResponseEntity.ok(this.cashCards.findAll());
+    public ResponseEntity<Iterable<CashCard>> findAll(Authentication authentication) {
+//        var filtered = new ArrayList<CashCard>();
+//        this.cashCards.findAll().forEach(cashCard -> {
+//            if (cashCard.owner().equals(authentication.getName())) {
+//                filtered.add(cashCard);
+//            }
+//        });
+
+        var result = this.cashCards.findByOwner(authentication.getName());
+        return ResponseEntity.ok(result);
     }
 }
