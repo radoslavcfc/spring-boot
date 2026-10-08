@@ -66,4 +66,30 @@ public class CashCardSpringSecurityTests {
         }
     }
 
+    @Test
+    void shouldRequireValidTokens() throws Exception {
+        String token = mint();
+        this.mvc.perform(get("/cashcards/100").header("Authorization", "Bearer " + token))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldNotAllowTokensWithAnInvalidAudience() throws Exception {
+        String token = mint((claims) -> claims.audience(List.of("https://wrong")));
+
+        this.mvc.perform(get("/cashcards/100").header("Authorization", "Bearer " + token))
+            .andExpect(status().isUnauthorized())
+            .andExpect(header().string("WWW-Authenticate", containsString("aud claim is not valid")));
+    }
+
+    @Test
+    void shouldNotAllowTokensThatAreExpired() throws Exception {
+        String token = mint((claims) -> claims
+            .issuedAt((Instant.now().minusSeconds(3600)))
+            .expiresAt(Instant.now().minusSeconds(3599)));
+
+        this.mvc.perform(get("/cashcards/100").header("Authorization", "Bearer " + token))
+            .andExpect(status().isUnauthorized())
+            .andExpect(header().string("WWW-Authenticate", containsString("Jwt expired")));
+    }
 }
