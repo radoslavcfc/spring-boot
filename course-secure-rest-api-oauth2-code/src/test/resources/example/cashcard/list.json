@@ -1,5 +1,17 @@
 [
-  {"id": 99, "amount": 123.45 , "owner": "sarah1"},
-  {"id": 100, "amount": 1.00 , "owner": "sarah1"},
-  {"id": 101, "amount": 150.00, "owner": "sarah1" }
+  {
+    "amount": 123.45,
+    "id": 99,
+    "owner": "sarah1"
+  },
+  {
+    "amount": 1.0,
+    "id": 100,
+    "owner": "sarah1"
+  },
+  {
+    "amount": 150.0,
+    "id": 101,
+    "owner": "esuez5"
+  }
 ]
