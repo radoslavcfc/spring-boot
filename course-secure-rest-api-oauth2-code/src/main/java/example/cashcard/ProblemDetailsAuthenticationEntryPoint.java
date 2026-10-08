@@ -18,9 +18,32 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProblemDetailsAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
+    private final AuthenticationEntryPoint delegate = new BearerTokenAuthenticationEntryPoint();
+    private final ObjectMapper mapper;
+
+    public ProblemDetailsAuthenticationEntryPoint(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
+
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
-        throws IOException, ServletException {
-        response.setStatus(401);
+    public void commence(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        AuthenticationException authException) throws IOException, ServletException {
+        delegate.commence(request, response, authException);
+
+        if(authException.getCause() instanceof JwtValidationException validation) {
+            ProblemDetail detail = ProblemDetail.forStatus(401);
+
+            detail.setType(URI.create("https://tools.ietf.org/html/rfc6750#section-3.1"));
+            detail.setTitle("Invalid Token");
+            detail.setProperty("errors", validation.getErrors());
+
+            // detail.setDetail(authException.getMessage());
+            // response.setContentType("application/problem+json");
+            // response.getWriter().write(mapper.writeValueAsString(problemDetail));
+
+            this.mapper.writeValue(response.getWriter(), detail);
+        }
     }
 }
