@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +24,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 @RequestMapping("/cashcards")
 public class CashCardController {
-    private CashCardRepository cashCards;
+    private final CashCardRepository cashCards;
 
     public CashCardController(CashCardRepository cashCards) {
         this.cashCards = cashCards;
     }
 
+    @PostAuthorize("returnObject.body.owner == authentication.name")
     @GetMapping("/{requestedId}")
     public ResponseEntity<CashCard> findById(@PathVariable Long requestedId) {
         return this.cashCards.findById(requestedId)
@@ -37,7 +39,7 @@ public class CashCardController {
     }
 
     @PostMapping
-    private ResponseEntity<CashCard> createCashCard(@RequestBody CashCardRequest newCashCardRequest, UriComponentsBuilder ucb, @CurrentOwner String owner) {
+    public ResponseEntity<CashCard> createCashCard(@RequestBody CashCardRequest newCashCardRequest, UriComponentsBuilder ucb, @CurrentOwner String owner) {
         CashCard cashCard = new CashCard(null, newCashCardRequest.amount(), owner);
         CashCard savedCashCard = cashCards.save(cashCard);
         URI locationOfNewCashCard = ucb

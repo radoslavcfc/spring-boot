@@ -31,6 +31,13 @@ class CashCardApplicationTests {
             .andExpect(jsonPath("$.owner").value("sarah1"));
     }
 
+    @WithMockUser(username = "esuez5", authorities = {"SCOPE_cashcard:read"})
+    @Test
+    void shouldReturnForbiddenWhenCardBelongsToSomeoneElse() throws Exception {
+        this.mvc.perform(get("/cashcards/99"))
+            .andExpect(status().isForbidden());
+    }
+
     @WithMockUser(username="esuez5", authorities = {"SCOPE_cashcard:read", "SCOPE_cashcard:write"})
     @Test
     @DirtiesContext
@@ -47,7 +54,6 @@ class CashCardApplicationTests {
             .andExpect(header().exists("Location"))
             .andReturn().getResponse().getHeader("Location");
 
-        assert location != null;
         this.mvc.perform(get(location))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.amount").value(250.00))
