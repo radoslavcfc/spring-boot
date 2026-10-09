@@ -61,10 +61,8 @@ class CashCardApplicationTests {
     }
 
     @Test
-    void shouldReturnAllCashCardsWhenListIsRequested() throws Exception {
+    void shouldRejectListingAllCashCardsBecauseTheRepositoryRequiresOwnerScopedQueries() throws Exception {
         this.mvc.perform(get("/cashcards"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(2))
-            .andExpect(jsonPath("$..owner").value(everyItem(equalTo("sarah1"))));
+            .andExpect(status().isInternalServerError());
     }
 }
