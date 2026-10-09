@@ -24,20 +24,19 @@ public class CashCardApplication {
     }
 
     @Bean
-    SecurityFilterChain appSecurity(
-        HttpSecurity http,
-        ProblemDetailsAuthenticationEntryPoint entryPoint) throws Exception {
+    SecurityFilterChain appSecurity(HttpSecurity http,
+                                    AuthenticationEntryPoint entryPoint)
+        throws Exception {
         http
-            .authorizeHttpRequests((authorize)
-                -> authorize.anyRequest().authenticated())
-            .oauth2ResourceServer((oauth2)
-                -> oauth2
+            .authorizeHttpRequests((authorize) -> authorize
+                .anyRequest().authenticated()
+            )
+            .oauth2ResourceServer((oauth2) -> oauth2
                 .authenticationEntryPoint(entryPoint)
                 .jwt(Customizer.withDefaults())
             );
         return http.build();
     }
-
 }
 
 
