@@ -1,26 +1,23 @@
 package example.cashcard;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 //@AutoConfigureMockMvc(addFilters = false)
 @AutoConfigureMockMvc
-@WithMockUser(username = "sarah1")
+@WithMockUser(username = "sarah1", authorities = {"SCOPE_cashcard:read"})
 class CashCardApplicationTests {
 
     @Autowired
@@ -34,6 +31,7 @@ class CashCardApplicationTests {
             .andExpect(jsonPath("$.owner").value("sarah1"));
     }
 
+    @WithMockUser(username="esuez5", authorities = {"SCOPE_cashcard:read", "SCOPE_cashcard:write"})
     @Test
     @DirtiesContext
     void shouldCreateANewCashCard() throws Exception {
@@ -49,13 +47,15 @@ class CashCardApplicationTests {
             .andExpect(header().exists("Location"))
             .andReturn().getResponse().getHeader("Location");
 
+        assert location != null;
         this.mvc.perform(get(location))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.amount").value(250.00))
-            .andExpect(jsonPath("$.owner").value("sarah1"));
+            .andExpect(jsonPath("$.owner").value("esuez5"));
     }
 
     @Test
+    @WithMockUser(username="esuez5", authorities = {"SCOPE_cashcard:read", "SCOPE_cashcard:write"})
     @DirtiesContext
     void shouldNotCreateACashCardForADifferentUser() throws Exception {
         this.mvc.perform(post("/cashcards")
@@ -64,11 +64,13 @@ class CashCardApplicationTests {
                 .content("""
                         {
                             "amount" : 250.00,
-                            "owner"  : "not-sarah1"
+
+                            //gets override by the authenticated user
+                            "owner"  : "sarah1"
                         }
                         """))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.owner").value("sarah1"));
+            .andExpect(jsonPath("$.owner").value("esuez5"));
     }
 
     @Test
