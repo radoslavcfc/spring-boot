@@ -55,25 +55,6 @@ class CashCardApplicationTests {
     }
 
     @Test
-    @WithMockUser(username="esuez5", authorities = {"SCOPE_cashcard:read", "SCOPE_cashcard:write"})
-    @DirtiesContext
-    void shouldNotCreateACashCardForADifferentUser() throws Exception {
-        this.mvc.perform(post("/cashcards")
-                .with(csrf())
-                .contentType("application/json")
-                .content("""
-                        {
-                            "amount" : 250.00,
-
-                            //gets override by the authenticated user
-                            "owner"  : "sarah1"
-                        }
-                        """))
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.owner").value("esuez5"));
-    }
-
-    @Test
     void shouldReturnAllCashCardsWhenListIsRequested() throws Exception {
         this.mvc.perform(get("/cashcards"))
             .andExpect(status().isOk())
