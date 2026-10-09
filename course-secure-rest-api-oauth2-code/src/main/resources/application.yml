@@ -3,7 +3,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          public-key-location: classpath:authz.pub
+          issuer-uri: http://localhost:9000
           audiences: cashcard-client
 logging:
   level:
