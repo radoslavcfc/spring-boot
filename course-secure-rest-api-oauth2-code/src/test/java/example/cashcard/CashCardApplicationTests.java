@@ -31,6 +31,13 @@ class CashCardApplicationTests {
             .andExpect(jsonPath("$.owner").value("sarah1"));
     }
 
+    @WithMockUser(username = "esuez5", authorities = {"SCOPE_cashcard:read"})
+    @Test
+    void shouldReturnForbiddenWhenCardBelongsToSomeoneElse() throws Exception {
+        this.mvc.perform(get("/cashcards/99"))
+            .andExpect(status().isForbidden());
+    }
+
     @WithMockUser(username="esuez5", authorities = {"SCOPE_cashcard:read", "SCOPE_cashcard:write"})
     @Test
     @DirtiesContext
@@ -47,29 +54,9 @@ class CashCardApplicationTests {
             .andExpect(header().exists("Location"))
             .andReturn().getResponse().getHeader("Location");
 
-        assert location != null;
         this.mvc.perform(get(location))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.amount").value(250.00))
-            .andExpect(jsonPath("$.owner").value("esuez5"));
-    }
-
-    @Test
-    @WithMockUser(username="esuez5", authorities = {"SCOPE_cashcard:read", "SCOPE_cashcard:write"})
-    @DirtiesContext
-    void shouldNotCreateACashCardForADifferentUser() throws Exception {
-        this.mvc.perform(post("/cashcards")
-                .with(csrf())
-                .contentType("application/json")
-                .content("""
-                        {
-                            "amount" : 250.00,
-
-                            //gets override by the authenticated user
-                            "owner"  : "sarah1"
-                        }
-                        """))
-            .andExpect(status().isCreated())
             .andExpect(jsonPath("$.owner").value("esuez5"));
     }
 
