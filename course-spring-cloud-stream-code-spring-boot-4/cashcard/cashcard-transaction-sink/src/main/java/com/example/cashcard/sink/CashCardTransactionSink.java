@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
@@ -17,7 +16,7 @@ import com.example.cashcard.domain.EnrichedTransaction;
 @Configuration
 public class CashCardTransactionSink {
 
-    static final String CSV_FILE_PATH = "/tmp/transactions-output.csv";
+    public static final Path CSV_FILE_PATH = Path.of(System.getProperty("java.io.tmpdir"), "transactions-output.csv");
 
     @Bean
     public Consumer<EnrichedTransaction> sinkToConsole() {
@@ -38,10 +37,8 @@ public class CashCardTransactionSink {
                     .add(enrichedTransaction.cardHolderData().address())
                     .add(enrichedTransaction.approvalStatus().name());
 
-            Path path = Paths.get(CSV_FILE_PATH);
-
             try {
-                Files.writeString(path, enrichedTxnTextual.toString() + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                Files.writeString(CSV_FILE_PATH, enrichedTxnTextual.toString() + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             }
             catch (IOException e) {
                 throw new RuntimeException(e);

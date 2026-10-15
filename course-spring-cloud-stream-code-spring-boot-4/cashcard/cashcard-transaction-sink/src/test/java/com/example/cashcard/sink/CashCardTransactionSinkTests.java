@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
@@ -61,9 +60,11 @@ class CashCardTransactionSinkTests {
 
         Message<EnrichedTransaction> message = MessageBuilder.withPayload(enrichedTransaction).build();
 
+        Path path = CashCardTransactionSink.CSV_FILE_PATH;
+        Files.deleteIfExists(path);
+
         inputDestination.send(message, "cashCardTransactionFileSink-in-0");
 
-        Path path = Paths.get(CashCardTransactionSink.CSV_FILE_PATH);
         Awaitility.await().until(() -> Files.exists(path));
 
         List<String> lines = Files.readAllLines(path);
