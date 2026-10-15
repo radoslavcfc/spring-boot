@@ -5,7 +5,8 @@ plugins {
 }
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '21' +
+        ''
 }
 
 ext {
@@ -33,6 +34,11 @@ subprojects {
 	apply plugin: 'java'
 	apply plugin: 'org.springframework.boot'
 
+	java {
+		sourceCompatibility = '21'
+		targetCompatibility = '21'
+	}
+
 	dependencies {
 		implementation 'org.springframework.cloud:spring-cloud-stream'
 		implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka'
@@ -50,7 +56,17 @@ subprojects {
 	}
 }
 
+project('cashcard-transaction-sink') {
+	tasks.named('bootJar') {
+		enabled = false
+	}
+}
+
 project('cashcard-transaction-e2e-test') {
+
+	tasks.named('bootJar') {
+		enabled = false
+	}
 
 	dependencies {
 		implementation project(':cashcard-transaction-source')
@@ -60,7 +76,3 @@ project('cashcard-transaction-e2e-test') {
 		testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 	}
 }
-
-
-
-
